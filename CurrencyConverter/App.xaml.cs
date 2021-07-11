@@ -4,7 +4,13 @@ using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using CurrencyConverter.Core.Helpers;
+using CurrencyConverter.Core.Interfaces;
+using CurrencyConverter.Core.Models;
+using CurrencyConverter.Core.Services;
+using CurrencyConverter.ViewModels;
 using CurrencyConverter.Views;
+using Newtonsoft.Json.Linq;
 
 namespace CurrencyConverter
 {
@@ -71,32 +77,11 @@ namespace CurrencyConverter
         {
             var services = new ServiceCollection();
 
-            /*services.AddSingleton<TrainingService, TrainingService>();
-            services.AddSingleton<AnalyticsService, AnalyticsService>();
-            services.AddSingleton<IPlayer, MediaPlayerFoundation>();
-            services.AddSingleton<ISpeechToText<RecognitionResult>, SpeechService>();
-            services.AddSingleton<IPrivacySettings, PrivacySettingsEnabler>();
-            services.AddSingleton<ISettingsService, SettingsService>();
+            services.AddSingleton<IJsonParse<JToken, Currency>, JsonParcer>();
+            services.AddSingleton<IExchange<Currency, ExchangePair>, ExchangeService>();
+            services.AddSingleton<IHttpService, HttpDataService>(provider => new HttpDataService("https://www.cbr-xml-daily.ru/daily_json.js"));
 
-            services.AddSingleton<IDialogService, DialogService>(provider => new DialogService(new CustomDialogTypeLocator()));
-
-            services.AddSingleton<GetStudentsOption, GetStudentsOption>();
-            services.AddSingleton<SignUpOptions, SignUpOptions>();
-            services.AddSingleton<TrainingHistoryOptions, TrainingHistoryOptions>();
-            services.AddSingleton<TrainingDetailsOptions, TrainingDetailsOptions>();
-            services.AddSingleton<TrainingStartOptions, TrainingStartOptions>();
-            services.AddSingleton<TrainingRunOptions, TrainingRunOptions>();
-            services.AddSingleton<ResultsOptions, ResultsOptions>();
-            services.AddSingleton<DatabaseConnection, DatabaseConnection>();
-
-            services.AddTransient<SignInViewModel>();
-            services.AddTransient<SignUpViewModel>();
-            services.AddTransient<HistoryViewModel>();
-            services.AddTransient<HistoryDetailsViewModel>();
-            services.AddTransient<TrainingStartViewModel>();
-            services.AddTransient<TrainingRunViewModel>();
-            services.AddTransient<ResultsViewModel>();
-            services.AddTransient<DbConnectionDialogViewModel>();*/
+            services.AddTransient<ConverterViewModel>();
 
             return services.BuildServiceProvider();
         }

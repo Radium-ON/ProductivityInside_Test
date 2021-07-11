@@ -2,6 +2,7 @@
 using Windows.ApplicationModel.Core;
 using Windows.UI;
 using Windows.UI.ViewManagement;
+using Windows.UI.Xaml;
 using CurrencyConverter.ViewModels;
 
 using Windows.UI.Xaml.Controls;
@@ -23,6 +24,7 @@ namespace CurrencyConverter.Views
                 titleBar.ButtonBackgroundColor = Colors.Transparent;
                 titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
                 titleBar.ButtonForegroundColor = Colors.DarkSlateGray;
+                Window.Current.SetTitleBar(app_title_bar);
             }
             DataContext = App.Current.Services.GetService<ConverterViewModel>();
         }

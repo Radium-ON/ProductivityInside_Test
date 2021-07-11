@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Windows.ApplicationModel.Activation;
+using Windows.Foundation;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -50,6 +52,9 @@ namespace CurrencyConverter
                     rootFrame.Navigate(typeof(ConverterPage), e.Arguments);
                 }
                 Window.Current.Activate();
+                ApplicationView.PreferredLaunchViewSize = new Size(600, 900);
+                ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
+                ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 600));
             }
         }
 

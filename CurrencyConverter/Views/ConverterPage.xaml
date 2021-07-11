@@ -4,8 +4,116 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d" d:DesignWidth="671" d:DesignHeight="369">
+    <Page.Resources>
+        <Style TargetType="Button" x:Key="grid_button_style">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="MinWidth" Value="104"/>
+            <Setter Property="MinHeight" Value="34"/>
+            <Setter Property="Margin" Value="1"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="Background" Value="{ThemeResource ButtonRevealBackground}" />
+            <Setter Property="Foreground" Value="{ThemeResource ButtonForeground}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource ButtonRevealBorderBrush}" />
+            <Setter Property="BorderThickness" Value="{ThemeResource ButtonRevealBorderThemeThickness}"/>
+        </Style>
+    </Page.Resources>
     <Grid Background="{ThemeResource SystemControlAcrylicWindowBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <!-- Title Bar -->
+        <Grid x:Name="app_title_bar"
+              Background="Transparent"
+              VerticalAlignment="Top"
+              HorizontalAlignment="Stretch">
+            <TextBlock x:Name="app_title"
+                       xmlns:appModel="using:Windows.ApplicationModel"
+                       Text="{x:Bind appModel:Package.Current.DisplayName}"
+                       Style="{StaticResource CaptionTextBlockStyle}"
+                       IsHitTestVisible="False"
+                       Margin="48,8,0,0"/>
+        </Grid>
+        <RelativePanel Grid.Row="1">
+            <Grid x:Name="grid_currency_table"
+                  RelativePanel.AlignTopWithPanel="False">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
 
+                <StackPanel x:Name="stack_cur_source" Grid.Row="0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock/>
+                        <TextBlock>€</TextBlock>
+                    </StackPanel>
+                    <ComboBox/>
+                </StackPanel>
+                <StackPanel x:Name="stack_cur_target" Grid.Row="1">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock/>
+                        <TextBlock>$</TextBlock>
+                    </StackPanel>
+                    <ComboBox/>
+                </StackPanel>
+                <StackPanel x:Name="stack_info_update" Grid.Row="2">
+                    <TextBlock Text="1 EUR = 1.1876 USD"/>
+                    <TextBlock Text="Обновлено 11.07.2021 15:18"/>
+                    <HyperlinkButton Content="Обновить курсы"/>
+                </StackPanel>
+            </Grid>
+            <Grid x:Name="grid_digit_input"
+                  RelativePanel.AlignLeftWithPanel="True"
+                  RelativePanel.AlignRightWithPanel="True"
+                  RelativePanel.AlignBottomWithPanel="True"
+                  RelativePanel.Below="grid_currency_table">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Row="0" Grid.Column="1" Content="CE" Style="{StaticResource grid_button_style}"/>
+                <Button Grid.Row="0" Grid.Column="2" Content="&#x232B;" Style="{StaticResource grid_button_style}"/>
+                <Button Grid.Row="1" Grid.Column="0" Content="7" Style="{StaticResource grid_button_style}"/>
+                <Button Grid.Row="1" Grid.Column="1" Content="8" Style="{StaticResource grid_button_style}"/>
+                <Button Grid.Row="1" Grid.Column="2" Content="9" Style="{StaticResource grid_button_style}"/>
+                <Button Grid.Row="2" Grid.Column="0" Content="4" Style="{StaticResource grid_button_style}"/>
+                <Button Grid.Row="2" Grid.Column="1" Content="5" Style="{StaticResource grid_button_style}"/>
+                <Button Grid.Row="2" Grid.Column="2" Content="6" Style="{StaticResource grid_button_style}"/>
+                <Button Grid.Row="3" Grid.Column="0" Content="1" Style="{StaticResource grid_button_style}"/>
+                <Button Grid.Row="3" Grid.Column="1" Content="2" Style="{StaticResource grid_button_style}"/>
+                <Button Grid.Row="3" Grid.Column="2" Content="3" Style="{StaticResource grid_button_style}"/>
+                <Button Grid.Row="4" Grid.Column="1" Content="0" Style="{StaticResource grid_button_style}"/>
+                <Button Grid.Row="4" Grid.Column="2" Content="," Style="{StaticResource grid_button_style}"/>
+            </Grid>
+        </RelativePanel>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="FullScreen">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="480" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="grid_digit_input.(RelativePanel.Below)" Value="{x:Null}"/>
+                        <Setter Target="grid_digit_input.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+                        <Setter Target="grid_digit_input.(RelativePanel.AlignTopWithPanel)" Value="True"/>
+                        <Setter Target="grid_digit_input.(RelativePanel.AlignLeftWithPanel)" Value="True"/>
+                        <Setter Target="grid_digit_input.Margin" Value="200,50,0,0"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 </Page>

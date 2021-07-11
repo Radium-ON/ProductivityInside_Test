@@ -2,18 +2,29 @@
 {
     public class Currency
     {
-        public string Id { get; set; }
+        public string Id { get; }
 
-        public int NumCode { get; set; }
+        public int NumCode { get; }
 
-        public string CharCode { get; set; }
+        public string CharCode { get; }
 
-        public int Nominal { get; set; }
+        public int Nominal { get; }
 
-        public string Name { get; set; }
+        public string Name { get; }
 
-        public double Value { get; set; }
+        public double Value { get; }
 
-        public double Previous { get; set; }
+        public double Previous { get; }
+
+        public Currency(string id, int numCode, string charCode, int nominal, string name, double value, double previous)
+        {
+            Id = id;
+            NumCode = numCode;
+            CharCode = charCode;
+            Nominal = nominal;
+            Name = name;
+            Value = value;
+            Previous = previous;
+        }
     }
 }

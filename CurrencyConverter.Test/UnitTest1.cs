@@ -1,3 +1,4 @@
+using CurrencyConverter.Core.Helpers;
 using System;
 using System.Threading.Tasks;
 using CurrencyConverter.Core.Models;
@@ -139,6 +140,23 @@ namespace CurrencyConverter.Test
             var amountEurFromUsd = await exchange.CalcAmount(pair, currTargetUsd, 1000);
             Assert.AreEqual(999, Math.Round(amountUsdFromEur));
             Assert.AreEqual(845, Math.Round(amountEurFromUsd));
+        }
+
+        [TestMethod]
+        public async Task SelectListTest()
+        {
+            var http = new HttpDataService("https://www.cbr-xml-daily.ru/daily_json.js");
+            var valuteList = await http.GetAsync<JToken>("https://www.cbr-xml-daily.ru/daily_json.js");
+            var json = new JsonParcer();
+            var currencyList = await json.SelectList(valuteList);
+            var currSourceEur = new Currency("R01239",
+                978,
+                "EUR",
+                1,
+                "Евро",
+                88.1397,
+                88.7755);
+            Assert.AreEqual(currSourceEur.Id, currencyList.Find(c => c.CharCode == "EUR").Id);
         }
     }
 }

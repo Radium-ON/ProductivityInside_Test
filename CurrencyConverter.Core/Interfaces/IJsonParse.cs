@@ -1,10 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CurrencyConverter.Core.Interfaces
 {
-    public interface IJsonParse<T>
+    public interface IJsonParse<T, TCurrency>
     {
-        Task<T> SelectRoot(T deserializedObject);
-        Task<T> SelectList(T dedeserializedObject);
+        Task<List<TCurrency>> SelectList(T deserializedObject);
     }
 }

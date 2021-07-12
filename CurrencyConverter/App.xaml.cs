@@ -10,7 +10,7 @@ using CurrencyConverter.Core.Helpers;
 using CurrencyConverter.Core.Interfaces;
 using CurrencyConverter.Core.Models;
 using CurrencyConverter.Core.Services;
-using CurrencyConverter.ViewModels;
+using CurrencyConverter.Core.ViewModels;
 using CurrencyConverter.Views;
 using Newtonsoft.Json.Linq;
 

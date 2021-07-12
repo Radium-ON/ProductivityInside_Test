@@ -125,6 +125,9 @@
     <PackageReference Include="Microsoft.Toolkit.Mvvm">
       <Version>7.0.2</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.Toolkit.Uwp.UI">
+      <Version>7.0.2</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
       <Version>2.0.1</Version>
     </PackageReference>
@@ -133,7 +136,6 @@
     <PRIResource Include="Strings\en-us\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ViewModels\ConverterViewModel.cs" />
     <Compile Include="Views\ConverterPage.xaml.cs">
       <DependentUpon>ConverterPage.xaml</DependentUpon>
     </Compile>

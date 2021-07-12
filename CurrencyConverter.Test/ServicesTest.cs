@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 namespace CurrencyConverter.Test
 {
     [TestClass]
-    public class UnitTest1
+    public class ServicesTest
     {
         [TestMethod]
         public async Task JsonTokenNotNull()

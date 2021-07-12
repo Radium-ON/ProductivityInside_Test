@@ -10,7 +10,7 @@ using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 using Newtonsoft.Json.Linq;
 
-namespace CurrencyConverter.ViewModels
+namespace CurrencyConverter.Core.ViewModels
 {
     public class ConverterViewModel : ObservableObject
     {
@@ -64,10 +64,10 @@ namespace CurrencyConverter.ViewModels
             switch (field)
             {
                 case FieldsToSelection.Source:
-                    RatioInfo = $"1 {CurrentPair.SourceCurrency.CharCode} {CurrentPair.RatioSource:C0} {CurrentPair.TargetCurrency.CharCode}";
+                    RatioInfo = $"1 {CurrentPair.SourceCurrency.CharCode} = {CurrentPair.RatioSource:#0.0000} {CurrentPair.TargetCurrency.CharCode}";
                     break;
                 case FieldsToSelection.Target:
-                    RatioInfo = $"1 {CurrentPair.TargetCurrency.CharCode} = {CurrentPair.RatioTarget:C0} {CurrentPair.SourceCurrency.CharCode}";
+                    RatioInfo = $"1 {CurrentPair.TargetCurrency.CharCode} = {CurrentPair.RatioTarget:#0.0000} {CurrentPair.SourceCurrency.CharCode}";
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -193,7 +193,7 @@ namespace CurrencyConverter.ViewModels
             var tokens = await _httpService.GetAsync<JToken>("https://www.cbr-xml-daily.ru/daily_json.js");
             Currencies = new ObservableCollection<Currency>(await _jsonParser.SelectList(tokens));
             await Task.Delay(1000);
-            UpdateTimeInfo = $"Обновлено {DateTime.Now}";
+            UpdateTimeInfo = $"Обновлено {DateTime.Now:dd.MM.yyyy hh:mm}";
             LoadingEnded = true;
         }
     }

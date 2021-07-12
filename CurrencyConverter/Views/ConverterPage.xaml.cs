@@ -1,13 +1,11 @@
-﻿using System;
-using Windows.ApplicationModel.Core;
+﻿using Windows.ApplicationModel.Core;
 using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
-using CurrencyConverter.ViewModels;
-
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using CurrencyConverter.Core.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CurrencyConverter.Views

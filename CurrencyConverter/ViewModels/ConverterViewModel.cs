@@ -25,6 +25,7 @@ namespace CurrencyConverter.ViewModels
         private Currency _curSource;
         private Currency _curTarget;
         private ExchangePair _pair;
+        private double _ratio;
 
         public ConverterViewModel(IJsonParse<JToken, Currency> jsonParser, IHttpService httpService, IExchange<Currency, ExchangePair> currencyConverter)
         {
@@ -35,11 +36,18 @@ namespace CurrencyConverter.ViewModels
             UpdateCommand = new RelayCommand(async () => await UpdateData());
             EnterDigitCommand = new RelayCommand<string>(EnterDigit);
             GotFocusCommand = new RelayCommand<object>(ChangeFieldToInput);
+
+            ExchangePairs = new List<ExchangePair>();
+        }
+
+        public async Task InitializeProperties()
+        {
+            await UpdateData();
         }
 
         private void ChangeFieldToInput(object obj)
         {
-
+            var lol = obj;
         }
 
         private void EnterDigit(string param)
@@ -87,6 +95,12 @@ namespace CurrencyConverter.ViewModels
             set => SetProperty(ref _pair, value);
         }
 
+        public double SelectedRatio
+        {
+            get => _ratio;
+            set => SetProperty(ref _ratio, value);
+        }
+
         private async Task SetPair()
         {
             var pair = ExchangePairs.First(p =>
@@ -108,7 +122,7 @@ namespace CurrencyConverter.ViewModels
 
         private async Task UpdateData()
         {
-            ExchangePairs.Clear();
+            ExchangePairs?.Clear();
             var tokens = await _httpService.GetAsync<JToken>("https://www.cbr-xml-daily.ru/daily_json.js");
             Currencies = new ObservableCollection<Currency>(await _jsonParser.SelectList(tokens));
         }

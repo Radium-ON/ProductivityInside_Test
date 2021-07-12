@@ -1,11 +1,13 @@
 ﻿using System;
 using Windows.ApplicationModel.Core;
 using Windows.UI;
+using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using CurrencyConverter.ViewModels;
 
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CurrencyConverter.Views
@@ -27,6 +29,21 @@ namespace CurrencyConverter.Views
                 Window.Current.SetTitleBar(app_title_bar);
             }
             DataContext = App.Current.Services.GetService<ConverterViewModel>();
+        }
+
+        private void UIElement_OnTapped(object sender, TappedRoutedEventArgs e)
+        {
+            var textblock = sender as TextBlock;
+            if (textblock?.Name == "tb_source")
+            {
+                tb_source.FontWeight = FontWeights.SemiBold;
+                tb_target.FontWeight = FontWeights.Light;
+            }
+            else
+            {
+                tb_target.FontWeight = FontWeights.SemiBold;
+                tb_source.FontWeight = FontWeights.Light;
+            }
         }
     }
 }

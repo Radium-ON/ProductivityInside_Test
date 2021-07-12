@@ -26,5 +26,14 @@
             Value = value;
             Previous = previous;
         }
+
+        #region Overrides of Object
+
+        public override string ToString()
+        {
+            return Name;
+        }
+
+        #endregion
     }
 }

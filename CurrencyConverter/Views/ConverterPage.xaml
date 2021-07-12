@@ -4,7 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" d:DesignWidth="671" d:DesignHeight="369">
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    mc:Ignorable="d" d:DesignWidth="671" d:DesignHeight="369" Loaded="{x:Bind ViewModel.InitializeProperties}">
     <Page.Resources>
         <Style TargetType="Button" x:Key="grid_button_style">
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
@@ -13,15 +15,45 @@
             <Setter Property="MinHeight" Value="34"/>
             <Setter Property="Margin" Value="1"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="Padding" Value="0"/>
             <Setter Property="Background" Value="{ThemeResource ButtonRevealBackground}" />
             <Setter Property="Foreground" Value="{ThemeResource ButtonForeground}" />
             <Setter Property="BorderBrush" Value="{ThemeResource ButtonRevealBorderBrush}" />
             <Setter Property="BorderThickness" Value="{ThemeResource ButtonRevealBorderThemeThickness}"/>
         </Style>
+
+        <Style TargetType="Button" x:Key="grid_button_style_small" BasedOn="{StaticResource grid_button_style}">
+            <Setter Property="FontSize" Value="24"/>
+        </Style>
+
+        <Style TargetType="Button" x:Key="grid_button_style_big" BasedOn="{StaticResource grid_button_style}">
+            <Setter Property="FontSize" Value="48"/>
+        </Style>
+
+        <Style TargetType="TextBlock" x:Key="text_block_currency_style_small">
+            <Setter Property="FontSize" Value="36"/>
+        </Style>
+
+        <Style TargetType="TextBlock" x:Key="text_block_currency_style_big">
+            <Setter Property="FontSize" Value="60"/>
+        </Style>
+
+        <Style TargetType="TextBlock" x:Key="text_block_symbol_style">
+            <Setter Property="FontWeight" Value="Light"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+        </Style>
+
+        <Style TargetType="TextBlock" x:Key="text_block_symbol_style_small" BasedOn="{StaticResource text_block_symbol_style}">
+            <Setter Property="FontSize" Value="24"/>
+        </Style>
+
+        <Style TargetType="TextBlock" x:Key="text_block_symbol_style_big" BasedOn="{StaticResource text_block_symbol_style}">
+            <Setter Property="FontSize" Value="36"/>
+        </Style>
     </Page.Resources>
     <Grid Background="{ThemeResource SystemControlAcrylicWindowBrush}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition />
         </Grid.RowDefinitions>
@@ -35,11 +67,12 @@
                        Text="{x:Bind appModel:Package.Current.DisplayName}"
                        Style="{StaticResource CaptionTextBlockStyle}"
                        IsHitTestVisible="False"
-                       Margin="48,8,0,0"/>
+                       Margin="10,8,0,0"/>
         </Grid>
-        <RelativePanel Grid.Row="1">
-            <Grid x:Name="grid_currency_table"
-                  RelativePanel.AlignTopWithPanel="False">
+
+        <TextBlock Text="Обмен валюты" Grid.Row="1" FontSize="20" Margin="44,0,0,0" FontWeight="SemiBold"/>
+        <RelativePanel Grid.Row="2" Margin="3">
+            <Grid x:Name="grid_currency_table" Margin="8,0,0,2" MinWidth="306">
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition/>
@@ -48,29 +81,42 @@
 
                 <StackPanel x:Name="stack_cur_source" Grid.Row="0">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock/>
-                        <TextBlock>€</TextBlock>
+                        <TextBlock Text="0" x:Name="tb_source" Style="{StaticResource text_block_currency_style_small}" Tapped="UIElement_OnTapped">
+                            <i:Interaction.Behaviors>
+                                <core:EventTriggerBehavior EventName="GotFocus">
+                                    <core:InvokeCommandAction Command="{x:Bind ViewModel.GotFocusCommand}"/>
+                                </core:EventTriggerBehavior>
+                            </i:Interaction.Behaviors>
+                        </TextBlock>
+                        <TextBlock Style="{StaticResource text_block_symbol_style_small}" x:Name="tb_symbol_source" Margin="10,0,0,0">€</TextBlock>
                     </StackPanel>
-                    <ComboBox/>
+                    <ComboBox Margin="0,14,8,0" HorizontalAlignment="Stretch" ItemsSource="{x:Bind ViewModel.Currencies, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.CurrencySource, Mode=TwoWay}"/>
                 </StackPanel>
-                <StackPanel x:Name="stack_cur_target" Grid.Row="1">
+                <StackPanel x:Name="stack_cur_target" Grid.Row="1" Margin="0,6,0,0">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock/>
-                        <TextBlock>$</TextBlock>
+                        <TextBlock Text="0" x:Name="tb_target" Style="{StaticResource text_block_currency_style_small}" Tapped="UIElement_OnTapped">
+                            <i:Interaction.Behaviors>
+                                <core:EventTriggerBehavior EventName="GotFocus">
+                                    <core:InvokeCommandAction Command="{x:Bind ViewModel.GotFocusCommand}"/>
+                                </core:EventTriggerBehavior>
+                            </i:Interaction.Behaviors>
+                        </TextBlock>
+                        <TextBlock Style="{StaticResource text_block_symbol_style_small}" x:Name="tb_symbol_target" Margin="10,0,0,0">$</TextBlock>
                     </StackPanel>
-                    <ComboBox/>
+                    <ComboBox HorizontalAlignment="Stretch" Margin="0,14,8,0" ItemsSource="{x:Bind ViewModel.Currencies, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.CurrencyTarget, Mode=TwoWay}"/>
                 </StackPanel>
-                <StackPanel x:Name="stack_info_update" Grid.Row="2">
-                    <TextBlock Text="1 EUR = 1.1876 USD"/>
-                    <TextBlock Text="Обновлено 11.07.2021 15:18"/>
+                <StackPanel x:Name="stack_info_update" Grid.Row="2" Margin="0,10,0,0">
+                    <TextBlock Text="{x:Bind ViewModel.SelectedRatio, Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <TextBlock Text="Обновлено 11.07.2021 15:18" Style="{StaticResource CaptionTextBlockStyle}"/>
                     <HyperlinkButton Content="Обновить курсы"/>
                 </StackPanel>
             </Grid>
+
             <Grid x:Name="grid_digit_input"
+                  RelativePanel.Below="grid_currency_table"
                   RelativePanel.AlignLeftWithPanel="True"
                   RelativePanel.AlignRightWithPanel="True"
-                  RelativePanel.AlignBottomWithPanel="True"
-                  RelativePanel.Below="grid_currency_table">
+                  RelativePanel.AlignBottomWithPanel="True">
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition/>
@@ -84,33 +130,56 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Row="0" Grid.Column="1" Content="CE" Style="{StaticResource grid_button_style}"/>
-                <Button Grid.Row="0" Grid.Column="2" Content="&#x232B;" Style="{StaticResource grid_button_style}"/>
-                <Button Grid.Row="1" Grid.Column="0" Content="7" Style="{StaticResource grid_button_style}"/>
-                <Button Grid.Row="1" Grid.Column="1" Content="8" Style="{StaticResource grid_button_style}"/>
-                <Button Grid.Row="1" Grid.Column="2" Content="9" Style="{StaticResource grid_button_style}"/>
-                <Button Grid.Row="2" Grid.Column="0" Content="4" Style="{StaticResource grid_button_style}"/>
-                <Button Grid.Row="2" Grid.Column="1" Content="5" Style="{StaticResource grid_button_style}"/>
-                <Button Grid.Row="2" Grid.Column="2" Content="6" Style="{StaticResource grid_button_style}"/>
-                <Button Grid.Row="3" Grid.Column="0" Content="1" Style="{StaticResource grid_button_style}"/>
-                <Button Grid.Row="3" Grid.Column="1" Content="2" Style="{StaticResource grid_button_style}"/>
-                <Button Grid.Row="3" Grid.Column="2" Content="3" Style="{StaticResource grid_button_style}"/>
-                <Button Grid.Row="4" Grid.Column="1" Content="0" Style="{StaticResource grid_button_style}"/>
-                <Button Grid.Row="4" Grid.Column="2" Content="," Style="{StaticResource grid_button_style}"/>
+                <Button x:Name="button_ce" Grid.Row="0" Grid.Column="1" Content="CE" Style="{StaticResource grid_button_style_small}" FontWeight="Normal"/>
+                <Button x:Name="button_del" Grid.Row="0" Grid.Column="2" Content="&#x232B;" Style="{StaticResource grid_button_style_small}" FontWeight="Normal"/>
+                <Button x:Name="button_7" Grid.Row="1" Grid.Column="0" Content="7" Style="{StaticResource grid_button_style_small}"/>
+                <Button x:Name="button_8" Grid.Row="1" Grid.Column="1" Content="8" Style="{StaticResource grid_button_style_small}"/>
+                <Button x:Name="button_9" Grid.Row="1" Grid.Column="2" Content="9" Style="{StaticResource grid_button_style_small}"/>
+                <Button x:Name="button_4" Grid.Row="2" Grid.Column="0" Content="4" Style="{StaticResource grid_button_style_small}"/>
+                <Button x:Name="button_5" Grid.Row="2" Grid.Column="1" Content="5" Style="{StaticResource grid_button_style_small}"/>
+                <Button x:Name="button_6" Grid.Row="2" Grid.Column="2" Content="6" Style="{StaticResource grid_button_style_small}"/>
+                <Button x:Name="button_1" Grid.Row="3" Grid.Column="0" Content="1" Style="{StaticResource grid_button_style_small}"/>
+                <Button x:Name="button_2" Grid.Row="3" Grid.Column="1" Content="2" Style="{StaticResource grid_button_style_small}"/>
+                <Button x:Name="button_3" Grid.Row="3" Grid.Column="2" Content="3" Style="{StaticResource grid_button_style_small}"/>
+                <Button x:Name="button_0" Grid.Row="4" Grid.Column="1" Content="0" Style="{StaticResource grid_button_style_small}"/>
+                <Button x:Name="button_com" Grid.Row="4" Grid.Column="2" Content="," Style="{StaticResource grid_button_style_small}"/>
             </Grid>
         </RelativePanel>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
-                <VisualState x:Name="FullScreen">
+                <VisualState>
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="480" />
+                        <AdaptiveTrigger MinWindowWidth="1680"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
+                        <Setter Target="grid_currency_table.(RelativePanel.AlignTopWithPanel)" Value="True"/>
+                        <Setter Target="grid_currency_table.(RelativePanel.AlignBottomWithPanel)" Value="True"/>
+                        <Setter Target="grid_currency_table.MinWidth" Value="360"/>
+
                         <Setter Target="grid_digit_input.(RelativePanel.Below)" Value="{x:Null}"/>
-                        <Setter Target="grid_digit_input.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+                        <Setter Target="grid_digit_input.(RelativePanel.RightOf)" Value="grid_currency_table"/>
                         <Setter Target="grid_digit_input.(RelativePanel.AlignTopWithPanel)" Value="True"/>
-                        <Setter Target="grid_digit_input.(RelativePanel.AlignLeftWithPanel)" Value="True"/>
-                        <Setter Target="grid_digit_input.Margin" Value="200,50,0,0"/>
+                        <Setter Target="grid_digit_input.(RelativePanel.AlignLeftWithPanel)" Value="False"/>
+                        <Setter Target="grid_digit_input.Margin" Value="600,0,0,0"/>
+
+                        <Setter Target="button_ce.Style"  Value="{StaticResource grid_button_style_big}"/>
+                        <Setter Target="button_del.Style" Value="{StaticResource grid_button_style_big}"/>
+                        <Setter Target="button_com.Style" Value="{StaticResource grid_button_style_big}"/>
+                        <Setter Target="button_7.Style"   Value="{StaticResource grid_button_style_big}"/>
+                        <Setter Target="button_8.Style"   Value="{StaticResource grid_button_style_big}"/>
+                        <Setter Target="button_9.Style"   Value="{StaticResource grid_button_style_big}"/>
+                        <Setter Target="button_4.Style"   Value="{StaticResource grid_button_style_big}"/>
+                        <Setter Target="button_5.Style"   Value="{StaticResource grid_button_style_big}"/>
+                        <Setter Target="button_6.Style"   Value="{StaticResource grid_button_style_big}"/>
+                        <Setter Target="button_1.Style"   Value="{StaticResource grid_button_style_big}"/>
+                        <Setter Target="button_2.Style"   Value="{StaticResource grid_button_style_big}"/>
+                        <Setter Target="button_3.Style"   Value="{StaticResource grid_button_style_big}"/>
+                        <Setter Target="button_0.Style"   Value="{StaticResource grid_button_style_big}"/>
+
+                        <Setter Target="tb_symbol_source.Style" Value="{StaticResource text_block_symbol_style_big}"/>
+                        <Setter Target="tb_symbol_target.Style" Value="{StaticResource text_block_symbol_style_big}"/>
+                        <Setter Target="tb_source.Style" Value="{StaticResource text_block_currency_style_big}"/>
+                        <Setter Target="tb_target.Style" Value="{StaticResource text_block_currency_style_big}"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

@@ -101,7 +101,7 @@
                                 </core:EventTriggerBehavior>
                             </i:Interaction.Behaviors>
                         </TextBlock>
-                        <TextBlock Style="{StaticResource text_block_symbol_style_small}" x:Name="tb_symbol_source" Margin="10,0,0,0">€</TextBlock>
+                        <!--<TextBlock Style="{StaticResource text_block_symbol_style_small}" x:Name="tb_symbol_source" Margin="10,0,0,0">€</TextBlock>-->
                     </StackPanel>
                     <ComboBox Margin="0,14,8,0" HorizontalAlignment="Stretch" ItemsSource="{x:Bind ViewModel.Currencies, Mode=OneWay}"
                               SelectionChanged="{x:Bind ViewModel.CurrencySelectionChanged}"
@@ -117,7 +117,7 @@
                                 </core:EventTriggerBehavior>
                             </i:Interaction.Behaviors>
                         </TextBlock>
-                        <TextBlock Style="{StaticResource text_block_symbol_style_small}" x:Name="tb_symbol_target" Margin="10,0,0,0">$</TextBlock>
+                        <!--<TextBlock Style="{StaticResource text_block_symbol_style_small}" x:Name="tb_symbol_target" Margin="10,0,0,0">$</TextBlock>-->
                     </StackPanel>
                     <ComboBox HorizontalAlignment="Stretch" Margin="0,14,8,0" ItemsSource="{x:Bind ViewModel.Currencies, Mode=OneWay}"
                               SelectionChanged="{x:Bind ViewModel.CurrencySelectionChanged}"
@@ -180,7 +180,7 @@
             <VisualStateGroup>
                 <VisualState>
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="1680"/>
+                        <AdaptiveTrigger MinWindowWidth="1080"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="grid_currency_table.(RelativePanel.AlignTopWithPanel)" Value="True"/>
@@ -207,8 +207,8 @@
                         <Setter Target="button_3.Style"   Value="{StaticResource grid_button_style_big}"/>
                         <Setter Target="button_0.Style"   Value="{StaticResource grid_button_style_big}"/>
 
-                        <Setter Target="tb_symbol_source.Style" Value="{StaticResource text_block_symbol_style_big}"/>
-                        <Setter Target="tb_symbol_target.Style" Value="{StaticResource text_block_symbol_style_big}"/>
+                        <!--<Setter Target="tb_symbol_source.Style" Value="{StaticResource text_block_symbol_style_big}"/>
+                        <Setter Target="tb_symbol_target.Style" Value="{StaticResource text_block_symbol_style_big}"/>-->
                         <Setter Target="tb_source.Style" Value="{StaticResource text_block_currency_style_big}"/>
                         <Setter Target="tb_target.Style" Value="{StaticResource text_block_currency_style_big}"/>
                     </VisualState.Setters>

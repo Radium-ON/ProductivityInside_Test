@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,8 +27,8 @@ namespace CurrencyConverter.Core.ViewModels
         private Currency _curTarget;
         private ExchangePair _pair;
         private string _ratioInfo;
-        private double _sourceConvertsion;
-        private double _targetConversion;
+        private string _sourceConvertsion;
+        private string _targetConversion;
         private bool _loadingEnded;
         private string _updateTimeInfo;
 
@@ -44,19 +45,67 @@ namespace CurrencyConverter.Core.ViewModels
             _currencyConverter = currencyConverter;
 
             UpdateCommand = new RelayCommand(async () => await UpdateData());
-            EnterDigitCommand = new RelayCommand<string>(EnterDigit);
+            EnterDigitCommand = new RelayCommand<string>(async s =>
+            {
+                EnterDigit(s);
+                if (CurrentPair != null)
+                {
+                    await CalcConversion();
+                }
+            });
+            ClearInputCommand = new RelayCommand(ResetInputFields);
+            DeleteDigitCommand = new RelayCommand(async () =>
+            {
+                RemoveDigit();
+                if (CurrentPair != null)
+                {
+                    await CalcConversion();
+                }
+            });
             SourceFocusCommand = new RelayCommand(() =>
             {
-                SelectedField = FieldsToSelection.Source;
-                SetRatioInfo(SelectedField);
+                if (CurrentPair != null)
+                {
+                    SelectedField = FieldsToSelection.Source;
+                    SetRatioInfo(SelectedField);
+                }
             });
             TargetFocusCommand = new RelayCommand(() =>
             {
-                SelectedField = FieldsToSelection.Target;
-                SetRatioInfo(SelectedField);
+                if (CurrentPair != null)
+                {
+                    SelectedField = FieldsToSelection.Target;
+                    SetRatioInfo(SelectedField);
+                }
             });
 
             ExchangePairs = new List<ExchangePair>();
+            ResetInputFields();
+        }
+
+        private void ResetInputFields()
+        {
+            _stringBuilder.Clear();
+            _stringBuilder.Append("0");
+            SourceConversion = _stringBuilder.ToString();
+            TargetConversion = _stringBuilder.ToString();
+        }
+
+        private async Task CalcConversion()
+        {
+            switch (SelectedField)
+            {
+                case FieldsToSelection.Source:
+                    TargetConversion = (await _currencyConverter.CalcAmount(CurrentPair, CurrencySource, Convert.ToDouble(SourceConversion)))
+                        .ToString("#0.00");
+                    break;
+                case FieldsToSelection.Target:
+                    SourceConversion = (await _currencyConverter.CalcAmount(CurrentPair, CurrencyTarget, Convert.ToDouble(TargetConversion)))
+                        .ToString("#0.00");
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         private void SetRatioInfo(FieldsToSelection field)
@@ -81,20 +130,67 @@ namespace CurrencyConverter.Core.ViewModels
 
         private void EnterDigit(string param)
         {
-            //todo очистка builder, запись числа в поле, выбор поля вывода
-            _stringBuilder.Append(param);
-            var result = double.Parse(_stringBuilder.ToString());
+            if (char.IsDigit(param[0]))
+            {
+                if (_stringBuilder[0] == '0')
+                {
+                    _stringBuilder.Clear();
+                }
+                _stringBuilder.Append(param);
+            }
+            else
+            {
+                _stringBuilder.Replace('.', '\0');
+                _stringBuilder.Append(param);
+            }
             switch (SelectedField)
             {
                 case FieldsToSelection.Source:
-                    SourceConversion = result;
+                    SourceConversion = _stringBuilder.ToString();
                     break;
                 case FieldsToSelection.Target:
-                    TargetConversion = result;
+                    TargetConversion = _stringBuilder.ToString();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
+        }
+
+        private void RemoveDigit()
+        {
+            switch (SelectedField)
+            {
+                case FieldsToSelection.Source:
+                    SourceConversion = SetResultFromInput(SourceConversion);
+                    break;
+                case FieldsToSelection.Target:
+                    TargetConversion = SetResultFromInput(TargetConversion);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+        //todo переработать (parse не нужны)
+        private string SetResultFromInput(string value)
+        {
+            _stringBuilder.Clear();
+            _stringBuilder.Append(value);
+            var result = 0.0;
+            if (_stringBuilder.Length > 0)
+            {
+                _stringBuilder.Remove(_stringBuilder.Length - 1, 1);
+                if (_stringBuilder.Length == 0)
+                {
+                    result = 0;
+                }
+                else
+                {
+                    result = double.Parse(_stringBuilder.ToString());
+                }
+
+            }
+            return result.ToString(CultureInfo.InvariantCulture);
         }
 
         public FieldsToSelection SelectedField { get; set; }
@@ -135,13 +231,13 @@ namespace CurrencyConverter.Core.ViewModels
             set => SetProperty(ref _ratioInfo, value);
         }
 
-        public double SourceConversion
+        public string SourceConversion
         {
             get => _sourceConvertsion;
             set => SetProperty(ref _sourceConvertsion, value);
         }
 
-        public double TargetConversion
+        public string TargetConversion
         {
             get => _targetConversion;
             set => SetProperty(ref _targetConversion, value);
@@ -162,6 +258,11 @@ namespace CurrencyConverter.Core.ViewModels
         public async Task CurrencySelectionChanged()
         {
             await SetPair();
+            if (CurrentPair != null && ExchangePairs.Count > 0)
+            {
+                SetRatioInfo(SelectedField);
+                await CalcConversion();
+            }
         }
 
         private async Task SetPair()
@@ -190,9 +291,11 @@ namespace CurrencyConverter.Core.ViewModels
         {
             LoadingEnded = false;
             ExchangePairs?.Clear();
+            CurrentPair = null;
+            ResetInputFields();
             var tokens = await _httpService.GetAsync<JToken>("https://www.cbr-xml-daily.ru/daily_json.js");
             Currencies = new ObservableCollection<Currency>(await _jsonParser.SelectList(tokens));
-            await Task.Delay(1000);
+            await Task.Delay(300);
             UpdateTimeInfo = $"Обновлено {DateTime.Now:dd.MM.yyyy hh:mm}";
             LoadingEnded = true;
         }

@@ -19,7 +19,7 @@
 
         public override string ToString()
         {
-            return SourceCurrency.Name + TargetCurrency.Name;
+            return $"{SourceCurrency.Name} - {TargetCurrency.Name}";
         }
 
         #endregion

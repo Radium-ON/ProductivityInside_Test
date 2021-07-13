@@ -20,8 +20,8 @@ namespace CurrencyConverter.Core.Services
 
                 var ratioSourceBase = 1 / source.Value;
                 var ratioTargetBase = 1 / target.Value;
-                var ratioSource = ratioTargetBase / ratioSourceBase;
-                var ratioTarget = ratioSourceBase / ratioTargetBase;
+                var ratioSource = Math.Round(ratioTargetBase / ratioSourceBase, 4);
+                var ratioTarget = Math.Round(ratioSourceBase / ratioTargetBase, 4);
                 if (ratioTarget <= 0 || ratioSource <= 0)
                 {
                     throw new ArithmeticException("Ошибка данных. Коэффициенты конвертации должны быть больше 0");
